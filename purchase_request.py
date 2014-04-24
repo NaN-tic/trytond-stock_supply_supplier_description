@@ -25,8 +25,6 @@ class CreatePurchase:
                 context['language'] = supplier.lang.code
 
             with Transaction().set_context(context):
-                product_supplier_name = ProductSupplier(product_supplier.id).rec_name
-                if product_supplier_name:
-                    line.description = product_supplier_name
+                line.description = ProductSupplier(product_supplier.id).rec_name
 
         return line
