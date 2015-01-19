@@ -12,11 +12,11 @@ class CreatePurchase:
     __name__ = 'purchase.request.create_purchase'
 
     @classmethod
-    def compute_purchase_line(cls, request):
+    def compute_purchase_line(cls, request, purchase):
         '''Create purchase line with supplier code and description'''
         ProductSupplier = Pool().get('purchase.product_supplier')
 
-        line = super(CreatePurchase, cls).compute_purchase_line(request)
+        line = super(CreatePurchase, cls).compute_purchase_line(request, purchase)
 
         for product_supplier in request.product.product_suppliers:
             context = {}
