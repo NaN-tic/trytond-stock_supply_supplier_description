@@ -16,15 +16,20 @@ class CreatePurchase:
         '''Create purchase line with supplier code and description'''
         ProductSupplier = Pool().get('purchase.product_supplier')
 
-        line = super(CreatePurchase, cls).compute_purchase_line(request, purchase)
+        line = super(CreatePurchase, cls).compute_purchase_line(request,
+            purchase)
 
         for product_supplier in request.product.product_suppliers:
-            context = {}
-            supplier = product_supplier.party
-            if supplier and supplier.lang:
-                context['language'] = supplier.lang.code
+            if product_supplier.party and product_supplier.name and (
+                    request.party == product_supplier.party):
+                context = {}
+                supplier = product_supplier.party
+                if supplier and supplier.lang:
+                    context['language'] = supplier.lang.code
 
-            with Transaction().set_context(context):
-                line.description = ProductSupplier(product_supplier.id).rec_name
+                with Transaction().set_context(context):
+                    line.description = ProductSupplier(
+                        product_supplier.id).rec_name
+                break
 
         return line
