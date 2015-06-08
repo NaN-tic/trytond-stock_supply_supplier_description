@@ -16,6 +16,8 @@ class PurchaseLine:
     def on_change_product(self):
         ProductSupplier = Pool().get('purchase.product_supplier')
         res = super(PurchaseLine, self).on_change_product()
+        if not self.product:
+            return res
         for product_supplier in self.product.product_suppliers:
             if product_supplier.party and product_supplier.name and (
                     self.purchase.party == product_supplier.party):
