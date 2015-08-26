@@ -1,3 +1,4 @@
+# This file is part of the stock_supply_supplier_description module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.model import fields
@@ -16,12 +17,13 @@ class PurchaseLine:
     def on_change_product(self):
         ProductSupplier = Pool().get('purchase.product_supplier')
 
-        res = super(PurchaseLine, self).on_change_product()
+        super(PurchaseLine, self).on_change_product()
         if not self.product or not self.purchase:
-            return res
+            return
 
+        description = self.product.rec_name
         for product_supplier in self.product.product_suppliers:
-            if product_supplier.party and product_supplier.name and (
+            if product_supplier.party and (
                     self.purchase.party == product_supplier.party):
                 supplier = product_supplier.party
                 context = {}
@@ -29,7 +31,7 @@ class PurchaseLine:
                     context['language'] = supplier.lang.code
 
                 with Transaction().set_context(context):
-                    res['description'] = ProductSupplier(
-                        product_supplier.id).rec_name
+                    description = ProductSupplier(
+                        product_supplier.id).supplier_name or description
                 break
-        return res
+        self.description = description

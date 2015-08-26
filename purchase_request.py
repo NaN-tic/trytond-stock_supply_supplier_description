@@ -19,8 +19,9 @@ class CreatePurchase:
         line = super(CreatePurchase, cls).compute_purchase_line(request,
             purchase)
 
+        description = request.product.rec_name
         for product_supplier in request.product.product_suppliers:
-            if product_supplier.party and product_supplier.name and (
+            if product_supplier.party and (
                     request.party == product_supplier.party):
                 context = {}
                 supplier = product_supplier.party
@@ -28,8 +29,8 @@ class CreatePurchase:
                     context['language'] = supplier.lang.code
 
                 with Transaction().set_context(context):
-                    line.description = ProductSupplier(
-                        product_supplier.id).rec_name
+                    description = ProductSupplier(
+                        product_supplier.id).supplier_name or description
                 break
-
+        line.description = description
         return line
