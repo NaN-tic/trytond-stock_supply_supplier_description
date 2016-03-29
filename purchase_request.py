@@ -5,10 +5,10 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['CreatePurchase']
-__metaclass__ = PoolMeta
 
 
 class CreatePurchase:
+    __metaclass__ = PoolMeta
     __name__ = 'purchase.request.create_purchase'
 
     @classmethod

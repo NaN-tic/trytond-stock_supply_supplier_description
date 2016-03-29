@@ -5,10 +5,10 @@ from trytond.pool import PoolMeta
 from trytond.model import fields
 
 __all__ = ['ProductSupplier']
-__metaclass__ = PoolMeta
 
 
 class ProductSupplier:
+    __metaclass__ = PoolMeta
     __name__ = 'purchase.product_supplier'
 
     supplier_name = fields.Function(fields.Char('Supplier Name'),
