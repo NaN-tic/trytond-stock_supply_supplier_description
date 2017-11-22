@@ -23,15 +23,13 @@ class PurchaseLine:
 
         description = self.product.rec_name
         for product_supplier in self.product.product_suppliers:
-            if product_supplier.party and (
-                    self.purchase.party == product_supplier.party):
-                supplier = product_supplier.party
+            supplier = product_supplier.party
+            if supplier and (self.purchase.party == supplier):
                 context = {}
                 if supplier and supplier.lang:
                     context['language'] = supplier.lang.code
 
                 with Transaction().set_context(context):
-                    description = ProductSupplier(
+                    self.description = ProductSupplier(
                         product_supplier.id).supplier_name or description
                 break
-        self.description = description
