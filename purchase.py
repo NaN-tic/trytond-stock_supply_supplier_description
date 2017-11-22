@@ -6,10 +6,10 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['PurchaseLine']
-__metaclass__ = PoolMeta
 
 
 class PurchaseLine:
+    __metaclass__ = PoolMeta
     __name__ = 'purchase.line'
 
     @fields.depends('_parent_product.product_suppliers',
@@ -23,15 +23,13 @@ class PurchaseLine:
 
         description = self.product.rec_name
         for product_supplier in self.product.product_suppliers:
-            if product_supplier.party and (
-                    self.purchase.party == product_supplier.party):
-                supplier = product_supplier.party
+            supplier = product_supplier.party
+            if supplier and (self.purchase.party == supplier):
                 context = {}
                 if supplier and supplier.lang:
                     context['language'] = supplier.lang.code
 
                 with Transaction().set_context(context):
-                    description = ProductSupplier(
+                    self.description = ProductSupplier(
                         product_supplier.id).supplier_name or description
                 break
-        self.description = description
