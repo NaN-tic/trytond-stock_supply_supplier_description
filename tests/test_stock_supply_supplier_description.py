@@ -21,8 +21,6 @@ def suite():
     for test in test_company.suite():
         if test not in suite and not isinstance(test, doctest.DocTestCase):
             suite.addTest(test)
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
-        StockSupplySupplierDescriptionTestCase))
     suite.addTests(doctest.DocFileSuite(
             'scenario_stock_supplier_description.rst',
             setUp=doctest_setup, tearDown=doctest_teardown, encoding='UTF-8',
