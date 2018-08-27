@@ -9,6 +9,7 @@ Imports::
     >>> from decimal import Decimal
     >>> from operator import attrgetter
     >>> from proteus import config, Model, Wizard, Report
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.company.tests.tools import create_company, \
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
@@ -17,28 +18,14 @@ Imports::
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date.today()
 
-Create database::
+Install stock_supply_supplier_description::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install suppier description::
-
-    >>> Module = Model.get('ir.module')
-    >>> purchase_module, = Module.find([('name', '=', 'stock_supply_supplier_description')])
-    >>> purchase_module.click('install')
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('stock_supply_supplier_description')
 
 Create company::
 
     >>> _ = create_company()
     >>> company = get_company()
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> Group = Model.get('res.group')
-    >>> config._context = User.get_preferences(True, config.context)
 
 Create fiscal year::
 
@@ -53,12 +40,6 @@ Create chart of accounts::
     >>> revenue = accounts['revenue']
     >>> expense = accounts['expense']
     >>> cash = accounts['cash']
-
-    >>> Journal = Model.get('account.journal')
-    >>> cash_journal, = Journal.find([('type', '=', 'cash')])
-    >>> cash_journal.credit_account = cash
-    >>> cash_journal.debit_account = cash
-    >>> cash_journal.save()
 
 Create tax::
 
@@ -96,17 +77,19 @@ Create product::
     >>> template.purchasable = True
     >>> template.salable = True
     >>> template.list_price = Decimal('10')
-    >>> template.cost_price = Decimal('5')
-    >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.supplier_taxes.append(tax)
+    >>> product, = template.products
+    >>> product.cost_price = Decimal('5')
     >>> template.save()
     >>> product, = template.products
     >>> product.code = 'P01'
     >>> product.save()
+
     >>> product2 = Product()
     >>> product2.template = template
+    >>> product2.cost_price = Decimal('5')
     >>> product2.code = 'P02'
     >>> product2.save()
 
