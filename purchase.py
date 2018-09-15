@@ -8,8 +8,7 @@ from trytond.transaction import Transaction
 __all__ = ['PurchaseLine']
 
 
-class PurchaseLine:
-    __metaclass__ = PoolMeta
+class PurchaseLine(metaclass=PoolMeta):
     __name__ = 'purchase.line'
 
     @fields.depends('_parent_product.product_suppliers',

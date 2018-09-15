@@ -7,8 +7,7 @@ from trytond.transaction import Transaction
 __all__ = ['CreatePurchase']
 
 
-class CreatePurchase:
-    __metaclass__ = PoolMeta
+class CreatePurchase(metaclass=PoolMeta):
     __name__ = 'purchase.request.create_purchase'
 
     @classmethod
