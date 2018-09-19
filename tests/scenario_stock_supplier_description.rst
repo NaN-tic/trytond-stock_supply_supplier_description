@@ -14,13 +14,13 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts, create_tax
-    >>> from.trytond.modules.account_invoice.tests.tools import \
+    >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date.today()
 
 Install stock_supply_supplier_description::
 
-    >>> config = activate_modules('stock_supply_supplier_description')
+    >>> config = activate_modules(['stock_supply_supplier_description', 'purchase'])
 
 Create company::
 
@@ -63,6 +63,19 @@ Create parties::
     >>> customer = Party(name='Customer')
     >>> customer.save()
 
+Create account categories::
+
+    >>> ProductCategory = Model.get('product.category')
+    >>> account_category = ProductCategory(name="Account Category")
+    >>> account_category.accounting = True
+    >>> account_category.account_expense = expense
+    >>> account_category.account_revenue = revenue
+    >>> account_category.save()
+
+    >>> account_category_tax, = account_category.duplicate()
+    >>> account_category_tax.customer_taxes.append(tax)
+    >>> account_category_tax.save()
+
 Create product::
 
     >>> ProductUom = Model.get('product.uom')
@@ -77,13 +90,10 @@ Create product::
     >>> template.purchasable = True
     >>> template.salable = True
     >>> template.list_price = Decimal('10')
-    >>> template.account_expense = expense
-    >>> template.account_revenue = revenue
-    >>> template.supplier_taxes.append(tax)
-    >>> product, = template.products
-    >>> product.cost_price = Decimal('5')
+    >>> template.account_category = account_category_tax
     >>> template.save()
     >>> product, = template.products
+    >>> product.cost_price = Decimal('5')
     >>> product.code = 'P01'
     >>> product.save()
 
@@ -148,7 +158,12 @@ Create purchase::
     >>> purchase_line.description == '[SO1] Supplier P01'
     True
 
+    >>> purchase = Purchase()
     >>> purchase.party = supplier2
+    >>> purchase.payment_term = payment_term
+    >>> purchase.invoice_method = 'order'
+    >>> purchase_line = PurchaseLine()
+    >>> purchase.lines.append(purchase_line)
     >>> purchase_line = PurchaseLine()
     >>> purchase.lines.append(purchase_line)
     >>> purchase_line.product = product2
@@ -158,13 +173,18 @@ Create purchase::
     >>> purchase_line.description == '[SO2] Supplier P02'
     True
 
+    >>> purchase = Purchase()
     >>> purchase.party = supplier3
+    >>> purchase.payment_term = payment_term
+    >>> purchase.invoice_method = 'order'
+    >>> purchase_line = PurchaseLine()
+    >>> purchase.lines.append(purchase_line)
+    >>> purchase_line = PurchaseLine()
     >>> purchase_line = PurchaseLine()
     >>> purchase.lines.append(purchase_line)
     >>> purchase_line.product = product
     >>> purchase_line.quantity = 1.0
     >>> purchase_line.unit_price == Decimal('5.00')
     True
-    >>> purchase_line.description == '[P01] product'
+    >>> purchase_line.description == None
     True
-    >>> purchase.save()
