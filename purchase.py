@@ -21,7 +21,7 @@ class PurchaseLine(metaclass=PoolMeta):
             return
 
         description = self.product.rec_name
-        for product_supplier in self.product.product_suppliers:
+        for product_supplier in self.product.template.product_suppliers:
             supplier = product_supplier.party
             if supplier and (self.purchase.party == supplier):
                 context = {}

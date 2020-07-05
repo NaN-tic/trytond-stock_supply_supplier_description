@@ -12,7 +12,7 @@ class ProductSupplier(metaclass=PoolMeta):
     supplier_name = fields.Function(fields.Char('Supplier Name'),
         'on_change_with_supplier_name')
 
-    @fields.depends('code', 'name', 'product')
+    @fields.depends('code', 'name', 'product', '_parent_product.name')
     def on_change_with_supplier_name(self, name=None):
         if self.code and self.name:
             return '[' + self.code + '] ' + self.name

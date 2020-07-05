@@ -88,19 +88,18 @@ Create product::
     >>> template.default_uom = unit
     >>> template.type = 'goods'
     >>> template.purchasable = True
-    >>> template.salable = True
     >>> template.list_price = Decimal('10')
     >>> template.account_category = account_category_tax
     >>> template.save()
     >>> product, = template.products
     >>> product.cost_price = Decimal('5')
-    >>> product.code = 'P01'
+    >>> product.suffix_code = 'P01'
     >>> product.save()
 
     >>> product2 = Product()
     >>> product2.template = template
     >>> product2.cost_price = Decimal('5')
-    >>> product2.code = 'P02'
+    >>> product2.suffix_code = 'P02'
     >>> product2.save()
 
 Add supplier in variants::
@@ -108,7 +107,7 @@ Add supplier in variants::
     >>> ProductSupplier = Model.get('purchase.product_supplier')
     >>> ProductSupplierPrice = Model.get('purchase.product_supplier.price')
     >>> ps = ProductSupplier()
-    >>> ps.product = template
+    >>> ps.template = template
     >>> ps.party = supplier
     >>> ps.name = 'Supplier P01'
     >>> ps.code = 'SO1'
@@ -125,7 +124,7 @@ Add supplier in variants::
     >>> ps.save()
 
     >>> ps2 = ProductSupplier()
-    >>> ps2.product = template
+    >>> ps2.template = template
     >>> ps2.party = supplier2
     >>> ps2.name = 'Supplier P02'
     >>> ps2.code = 'SO2'
@@ -164,8 +163,6 @@ Create purchase::
     >>> purchase.invoice_method = 'order'
     >>> purchase_line = PurchaseLine()
     >>> purchase.lines.append(purchase_line)
-    >>> purchase_line = PurchaseLine()
-    >>> purchase.lines.append(purchase_line)
     >>> purchase_line.product = product2
     >>> purchase_line.quantity = 1.0
     >>> purchase_line.unit_price == Decimal('20.00')
@@ -177,9 +174,6 @@ Create purchase::
     >>> purchase.party = supplier3
     >>> purchase.payment_term = payment_term
     >>> purchase.invoice_method = 'order'
-    >>> purchase_line = PurchaseLine()
-    >>> purchase.lines.append(purchase_line)
-    >>> purchase_line = PurchaseLine()
     >>> purchase_line = PurchaseLine()
     >>> purchase.lines.append(purchase_line)
     >>> purchase_line.product = product
