@@ -16,7 +16,7 @@ class ProductSupplier(metaclass=PoolMeta):
     def on_change_with_supplier_name(self, name=None):
         if self.code and self.name:
             return '[' + self.code + '] ' + self.name
-        elif self.code and not self.name:
+        elif self.code and not self.name and self.product:
             return '[' + self.code + '] ' + self.product.name
         elif self.name:
             return self.name
